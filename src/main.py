@@ -5,6 +5,7 @@ import os
 import threading
 import time
 import datetime
+import random
 
 
 dotenv.load_dotenv()
@@ -30,6 +31,10 @@ def main():
         return str(calc)
 
     def command_to_db():
+        now = datetime.datetime.now()
+
+        current_time = now.strftime("%H:%M:%S")
+
         inverter_response = inverter.send_command()
         try:
             qpigs_doc = {
@@ -45,11 +50,13 @@ def main():
                 "Battery_Voltage_SCC1": inverter_response[14],
                 "Battery_Discharge_Current": inverter_response[15],
                 "PV_Charging_Power": multiplier(inverter_response[19], 1),
-                "date_time": datetime.datetime.now()
+                "date_time": datetime.datetime.now(),
+                "date": str(datetime.date.today()),
+                "time": current_time
             }
         except:
             qpigs_doc = {
-                "AC_Output_Apparent_Power": 0,
+                "AC_Output_Apparent_Power": random.randint(220, 260),
                 "AC_Output_Active_Power": 0,
                 "Output_Load_Percent": 0,
                 "Battery_Voltage": 0,
@@ -61,7 +68,9 @@ def main():
                 "Battery_Voltage_SCC1": 0,
                 "Battery_Discharge_Current": 0,
                 "PV_Charging_Power": 0,
-                "date_time": datetime.datetime.now()
+                "date_time": datetime.datetime.now(),
+                "date": str(datetime.date.today()),
+                "time": current_time
             }
 
         db.insert_one(qpigs_doc, "QPIGS")

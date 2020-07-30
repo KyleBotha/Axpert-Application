@@ -25,8 +25,8 @@ class ConnectDB:
                 self.qpigs_collection.insert_one(doc)
                 print("Document Inserted.")
 
-            except:
-                print("Insert one failed.")
+            except Exception as e:
+                print("Insert one failed.", e)
 
             pp = pprint.PrettyPrinter(indent=4)
             pp.pprint(doc)
